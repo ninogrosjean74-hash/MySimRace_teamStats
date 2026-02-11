@@ -65,7 +65,7 @@ def fetch_all_data(session: requests.Session) -> dict:
     return all usefull data from MSR
 
     dict_format = {
-        "fetched_time": time.struct_time
+        "fetch_time": time.struct_time
         "tracks": {
             track_id: {"track_id":..., "track_name":..., "country_code":...}
             ...
@@ -110,12 +110,3 @@ def fetch_ohne_speed() -> pd.DataFrame:
     df = pd.read_csv(url)
 
     return df
-
-
-if __name__ == "__main__":
-    import login
-
-    session = login.create_session()
-    login.login_MSR(session, "none", "none")
-    all = fetch_all_data(session)
-    print(all["data"][(97, "Hypercar")][197])

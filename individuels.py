@@ -1,29 +1,39 @@
-import connect
 import streamlit as st
 
-team_pilots_dict = connect.get_team_pilots()
+import process.treat_data as treat_data
+import process.cached_fetch as cfetch
+
+all_data = cfetch.get_all_data()
+ohne_speed_MSR_s = cfetch.get_ohne_speed("MSR", "s")
+treat_data.comp_all_performances(all_data, ohne_speed_MSR_s)
+
+st.markdown("# Meilleurs temps")
+
+
+team_pilots_dict = all_data["pilots"]
 sbPilots = st.selectbox(
     "Pilot",
-    sorted(team_pilots_dict.keys()),
-    width=500,
+    team_pilots_dict.keys(),
+    format_func=lambda id: team_pilots_dict[id]["name"],
+    width=250,
     index=0,
 )
 
 
-LC, RC = st.columns(2)
+# LC, RC = st.columns(2)
 
-sbLigne = LC.selectbox(
-    "Circuit",
-    ["All"],  # + sorted([x for x in select.index]),
-    width=500,
-    index=0,
-)
-sbCol = RC.selectbox(
-    "Voiture",
-    ["All"],  # + sorted([x for x in select.columns]),
-    width=500,
-    index=0,
-)
+# sbLigne = LC.selectbox(
+#     "Circuit",
+#     ["All"] + sorted([x["track_name"] for x in all_data["tracks"].values()]),
+#     width=500,
+#     index=0,
+# )
+# sbCol = RC.selectbox(
+#     "Voiture",
+#     ["All"] + sorted([x for x in select.columns]),
+#     width=500,
+#     index=0,
+# )
 
 radio = st.radio(
     "Data",
@@ -31,7 +41,4 @@ radio = st.radio(
     horizontal=True,
 )
 
-st.table(connect.get_showable_pilot_df(team_pilots_dict[sbPilots], data=radio))
-if st.button("Reload MSR data"):
-    connect.update_all_MSR_data()
-    print(st.session_state["MSR_session"])
+st.table(treat_data.get_showable_pilot_df(all_data, sbPilots, data=radio))
