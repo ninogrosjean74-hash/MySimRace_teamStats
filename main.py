@@ -25,6 +25,7 @@ if not "session_expired" in st.session_state:
 if not st.session_state["is_logged"]:
     if st.session_state["session_expired"]:
         st.markdown("Session expired : reconnect")
+        st.session_state["session"] = login.create_session()
     else:
         st.markdown("Connection to Mysimrace")
 
