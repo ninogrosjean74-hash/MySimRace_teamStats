@@ -29,7 +29,12 @@ def logout_MSR(session: requests.Session) -> None:
 
 
 def is_logged_in(session: requests.Session) -> bool:
-    url_test = "https://mysimrace.com/api/tracks.php"
+    url_test = "https://mysimrace.com/api/team_progress.php"
     resp = session.get(url_test)
 
     return resp.status_code == 200
+
+
+if __name__ == "__main__":
+    session = requests.Session()
+    print(is_logged_in(session))
