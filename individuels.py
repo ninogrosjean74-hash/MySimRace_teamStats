@@ -11,12 +11,17 @@ st.markdown("# Meilleurs temps")
 
 
 team_pilots_dict = all_data["pilots"]
+team_pilots_id_list = list(team_pilots_dict.keys())
+if not "pilot_indiv" in st.session_state:
+    st.session_state["pilot_indiv"] = team_pilots_id_list[0]
+
 sbPilots = st.selectbox(
     "Pilot",
-    team_pilots_dict.keys(),
+    team_pilots_id_list,
     format_func=lambda id: team_pilots_dict[id]["name"],
+    key="pilot_indiv",
     width=250,
-    index=0,
+    # index=0,
 )
 
 

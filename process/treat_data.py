@@ -287,3 +287,38 @@ def perf_coloring(arg):
         return "background-color: #F4CCCC"
 
     return "background-color: #E6B8AF"
+
+
+def get_compa_data(all_data: dict, pilot_id_list: list[int]) -> dict:
+    compa_dict = {}
+    tracks = all_data["tracks"]
+    pilots = all_data["pilots"]
+    data = all_data["data"]
+    for (track_id, car), track_car_data in data.items():
+        for pilot_id in pilot_id_list:
+            pilot_data = track_car_data[pilot_id]
+            if not (tracks[track_id]["track_name"], car) in compa_dict:
+                compa_dict[(tracks[track_id]["track_name"], car)] = {}
+            compa_dict[(tracks[track_id]["track_name"], car)][pilots[pilot_id]["name"]] = {
+                "best_lap": pilot_data["best_time"],
+                "performance": pilot_data["performance"],
+                "laps": pilot_data["laps"],
+            }
+
+    return compa_dict
+
+
+def get_showable_comparaison_df(all_data: dict, pilot_id_list: list[int], data="Performance") -> pd.DataFrame:
+    compa_dict = get_compa_data(all_data, pilot_id_list)
+
+    data_df = pd.DataFrame(compa_dict).transpose()
+
+    if data == "Performance":
+        format = lambda dico: f'{dico["best_lap"]} ({dico["performance"]:.2f}%)' if not dico["best_lap"] is None else ""
+        df = data_df.map(format)
+        # df = df.style.map(perf_coloring)
+        return df
+
+    elif data == "Laps":
+        format = lambda dico: f'{dico["laps"]}' if dico["laps"] > 0 else ""
+        return data_df.map(format)

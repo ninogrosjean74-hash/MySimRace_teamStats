@@ -48,10 +48,10 @@ else:
     # Define the pages
     teamLeaderBoard = st.Page("teamLeaderBoard.py", title="Leaderboard")
     individuels = st.Page("individuels.py", title="Temps individuels")
+    comparaison = st.Page("comparaisons.py", title="Comparaisons")
     ohneSpeed = st.Page("ohneSpeed_time.py", title="Temps Ohne Speed")
-
     # Set up navigation
-    pg = st.navigation([teamLeaderBoard, individuels, ohneSpeed])
+    pg = st.navigation([teamLeaderBoard, individuels,  comparaison, ohneSpeed])
 
     # Run the selected page
     pg.run()
