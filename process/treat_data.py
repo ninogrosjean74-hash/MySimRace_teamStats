@@ -243,11 +243,11 @@ def init_pilot_table(all_data: dict) -> dict:
     return table
 
 
-def get_showable_pilot_df(all_data: dict, pilot_id: int, data="Performance") -> pd.DataFrame:
+def get_showable_pilot_df(all_data: dict, pilot_id: int, data="Best time") -> pd.DataFrame:
     pilot_list = get_personnal_track_car_data(all_data, pilot_id)
     pilot_table = init_pilot_table(all_data)
     for item in pilot_list:
-        if data == "Performance":
+        if data == "Best time":
             if item["best_lap"] is None:
                 value = ""
             elif item["performance"] is None:
@@ -255,16 +255,21 @@ def get_showable_pilot_df(all_data: dict, pilot_id: int, data="Performance") -> 
             else:
                 value = f'{item["best_lap"]} ({item["performance"]:.2f}%)'
         if data == "Laps":
-            if item["laps"] != 0:
-                value = f'{item["laps"]}'
-            else:
+            if item["laps"] == 0:
                 value = ""
+            elif item["performance"] is None:
+                value = f'{item["laps"]} (no perf)'
+            else:
+                value = f'{item["laps"]} ({item["performance"]:.2f}%)'
+
         pilot_table[item["track_id"]][item["car"]] = value
 
     df = pd.DataFrame(pilot_table.values())
     df = df.set_index("Track")
-    if data == "Performance":
-        df = df.style.map(perf_coloring)
+    # if data == "Performance":
+    #     df = df.style.map(perf_coloring)
+    df = df.style.map(perf_coloring)
+
     return df
 
 
@@ -272,21 +277,28 @@ def perf_coloring(arg):
     if arg == "":
         return ""
     perf = float(arg.split("(")[1].replace("%)", ""))
+    dark_palette = ["#1E3A5F", "#1F4E5F", "#1F5A3A", "#665200", "#6A3E00", "#5A1E1E", "#6E2A24"]
+    light_palette = ["#C9DAF8", "#D0E0E3", "#D9EAD3", "#FFF2CC", "#FCE5CD", "#F4CCCC", "#E6B8AF"]
+    balck = "#000000"
+    white = "#FFFFFF"
+
+    backgroud = dark_palette
+    font = white
 
     if perf < 1:
-        return "background-color: #C9DAF8"
+        return f"background-color: {backgroud[0]}; color: {font}"
     if perf < 2:
-        return "background-color: #D0E0E3"
+        return f"background-color: {backgroud[1]}; color: {font}"
     if perf < 3:
-        return "background-color: #D9EAD3"
+        return f"background-color: {backgroud[2]}; color: {font}"
     if perf < 4:
-        return "background-color: #FFF2CC"
+        return f"background-color: {backgroud[3]}; color: {font}"
     if perf < 5:
-        return "background-color: #FCE5CD"
+        return f"background-color: {backgroud[4]}; color: {font}"
     if perf < 6:
-        return "background-color: #F4CCCC"
+        return f"background-color: {backgroud[5]}; color: {font}"
 
-    return "background-color: #E6B8AF"
+    return f"background-color: {backgroud[6]}; color: {font}"
 
 
 def get_compa_data(all_data: dict, pilot_id_list: list[int]) -> dict:
@@ -308,17 +320,16 @@ def get_compa_data(all_data: dict, pilot_id_list: list[int]) -> dict:
     return compa_dict
 
 
-def get_showable_comparaison_df(all_data: dict, pilot_id_list: list[int], data="Performance") -> pd.DataFrame:
+def get_showable_comparaison_df(all_data: dict, pilot_id_list: list[int], data="Best time") -> pd.DataFrame:
     compa_dict = get_compa_data(all_data, pilot_id_list)
 
     data_df = pd.DataFrame(compa_dict).transpose()
 
-    if data == "Performance":
+    if data == "Best time":
         format = lambda dico: f'{dico["best_lap"]} ({dico["performance"]:.2f}%)' if not dico["best_lap"] is None else ""
         df = data_df.map(format)
-        # df = df.style.map(perf_coloring)
         return df
 
     elif data == "Laps":
-        format = lambda dico: f'{dico["laps"]}' if dico["laps"] > 0 else ""
+        format = lambda dico: f'{dico["laps"]} ({dico["performance"]:.2f}%)' if dico["laps"] > 0 else ""
         return data_df.map(format)

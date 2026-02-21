@@ -11,6 +11,8 @@ st.set_page_config(
     layout="wide",
     page_icon="🏎️",
 )  # active le wide mode
+st.logo("grid_404.png", size="large")
+
 
 if not "session" in st.session_state:
     st.session_state["session"] = login.create_session()
@@ -50,8 +52,9 @@ else:
     individuels = st.Page("individuels.py", title="Temps individuels")
     comparaison = st.Page("comparaisons.py", title="Comparaisons")
     ohneSpeed = st.Page("ohneSpeed_time.py", title="Temps Ohne Speed")
+
     # Set up navigation
-    pg = st.navigation([teamLeaderBoard, individuels,  comparaison, ohneSpeed])
+    pg = st.navigation([teamLeaderBoard, individuels, comparaison, ohneSpeed])
 
     # Run the selected page
     pg.run()
@@ -65,3 +68,5 @@ else:
         st.rerun()
 
     st.markdown(f"Dernier chargement des données : {ft.tm_mday:02d}/{ft.tm_mon:02d} {ft.tm_hour:02d}h{ft.tm_min:02d}")
+
+    st.image("grid_404.png", width=300)

@@ -55,7 +55,7 @@ while choice != "None" or len(available) == 0:
 st.text("\n")
 radio = st.radio(
     "Data",
-    ["Performance", "Laps"],
+    ["Best time", "Laps"],
     horizontal=True,
 )
 
@@ -93,8 +93,9 @@ else:
 
 
 # Coloring des perfs
-if radio == "Performance":
-    df_show = df_show.style.map(treat_data.perf_coloring)
+# if radio == "Performance":
+#     df_show = df_show.style.map(treat_data.perf_coloring)
+df_show = df_show.style.map(treat_data.perf_coloring)
 
 
 # Affichage du tableau

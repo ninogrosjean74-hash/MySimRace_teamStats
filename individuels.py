@@ -42,7 +42,7 @@ sbPilots = st.selectbox(
 
 radio = st.radio(
     "Data",
-    ["Performance", "Laps"],
+    ["Best time", "Laps"],
     horizontal=True,
 )
 
