@@ -12,18 +12,19 @@ st.markdown("# Meilleurs temps")
 
 team_pilots_dict = all_data["pilots"]
 team_pilots_id_list = list(team_pilots_dict.keys())
-if not "pilot_indiv" in st.session_state:
-    st.session_state["pilot_indiv"] = team_pilots_id_list[0]
+if not "pilot_indiv_index" in st.session_state:
+    st.session_state["pilot_indiv_index"] = 0
+
 
 sbPilots = st.selectbox(
     "Pilot",
     team_pilots_id_list,
     format_func=lambda id: team_pilots_dict[id]["name"],
-    key="pilot_indiv",
+    # key="pilot_indiv",
     width=250,
-    # index=0,
+    index=st.session_state["pilot_indiv_index"],
 )
-
+st.session_state["pilot_indiv_index"] = team_pilots_id_list.index(sbPilots)
 
 # LC, RC = st.columns(2)
 
@@ -40,10 +41,12 @@ sbPilots = st.selectbox(
 #     index=0,
 # )
 
-radio = st.radio(
-    "Data",
-    ["Best time", "Laps"],
-    horizontal=True,
-)
+if not "radio_indiv_index" in st.session_state:
+    st.session_state["radio_indiv_index"] = 0
+
+radio = st.radio("Data", ["Best time", "Laps"], horizontal=True, index=st.session_state["radio_indiv_index"])
+
+st.session_state["radio_indiv_index"] = ["Best time", "Laps"].index(radio)
+
 
 st.table(treat_data.get_showable_pilot_df(all_data, sbPilots, data=radio))

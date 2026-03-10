@@ -10,12 +10,17 @@ treat_data.comp_all_performances(all_data, ohne_speed_MSR_s)
 
 st.markdown("# Classement")
 
+if not "radio_leaderboard_index" in st.session_state:
+    st.session_state["radio_leaderboard_index"] = 0
 
 radio = st.radio(
     "Category",
     ["Hypercar", "Prototypes", "GT"],
     horizontal=True,
+    index=st.session_state["radio_leaderboard_index"],
 )
+st.session_state["radio_leaderboard_index"] = ["Hypercar", "Prototypes", "GT"].index(radio)
+
 
 if radio == "Hypercar":
     cars = ["Hypercar"]
@@ -24,8 +29,17 @@ elif radio == "Prototypes":
 elif radio == "GT":
     cars = ["GT3", "GTE"]
 
-nb_lap_mini = st.number_input("Minimum number of lap to count the performance", min_value=1, value=10, width=300)
+if not "nb_lap_mini_value" in st.session_state:
+    st.session_state["nb_lap_mini_value"] = 10
 
+nb_lap_mini = st.number_input(
+    "Minimum number of lap to count the performance",
+    min_value=1,
+    value=st.session_state["nb_lap_mini_value"],
+    width=300,
+)
+
+st.session_state["nb_lap_mini_value"] = nb_lap_mini
 
 df = treat_data.get_showable_leaderboard_df(all_data, cars, nb_lap_mini)
 st.table(df)
